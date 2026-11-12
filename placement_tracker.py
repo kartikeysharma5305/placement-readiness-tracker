@@ -53,6 +53,58 @@ def add_student(students):
     print(f"\nAdded {name} successfully.")
 
 
+def average(student):
+    """Return the average of the three subject scores."""
+    return (student["aptitude"] + student["verbal"] + student["coding"]) / 3
+
+
+def grade(avg):
+    """Assign grades according to the prescribed thresholds."""
+    if avg >= 80:
+        return "A"
+    if avg >= 60:
+        return "B"
+    if avg >= 40:
+        return "C"
+    return "Needs practice"
+
+
+def top_scorer(students):
+    """Return the student with the highest average score."""
+    return max(students, key=average)
+
+
+def needs_practice(students, limit=40):
+    """Return students with an average strictly below the given limit."""
+    return [student for student in students if average(student) < limit]
+
+
+def display_results(students):
+    """Print a readable table and identify students needing practice."""
+    header = (f"{'Name':<12} {'Roll No':<12} {'Apt':>5} {'Verb':>5} "
+              f"{'Code':>5} {'Avg':>7}  {'Grade':<15}")
+    print("\n" + header)
+    print("-" * len(header))
+    for student in students:
+        avg = average(student)
+        print(f"{student['name']:<12} {student['roll_no']:<12} "
+              f"{student['aptitude']:>5} {student['verbal']:>5} "
+              f"{student['coding']:>5} {avg:>7.2f}  {grade(avg):<15}")
+
+    best = top_scorer(students)
+    print(f"\nTop scorer: {best['name']} ({best['roll_no']}) "
+          f"with average {average(best):.2f}")
+
+    practice_list = needs_practice(students)  # Uses the default limit of 40.
+    if practice_list:
+        print("Students needing extra practice (average below 40):")
+        for student in practice_list:
+            print(f"  - {student['name']} ({student['roll_no']}): "
+                  f"{average(student):.2f}")
+    else:
+        print("No students need extra practice (average below 40).")
+
+
 def main():
     """Build the student list and run the interactive application."""
     print("=" * 75)
@@ -61,6 +113,7 @@ def main():
     students = [student.copy() for student in STUDENTS]
     add_student(students)
     print(f"\nTotal students recorded: {len(students)}")
+    display_results(students)
 
 
 if __name__ == "__main__":
